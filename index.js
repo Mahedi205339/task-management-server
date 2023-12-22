@@ -3,7 +3,7 @@ const app = express()
 exports.app = app
 require('dotenv').config()
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb')
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 const port = process.env.PORT || 5000
 
 app.use(cors())
@@ -27,6 +27,25 @@ const client = new MongoClient(process.env.DB_URI, {
       app.post('/tasks', async(req,res)=>{
         const tasks = req.body ;
         const result = await tasksCollection.insertOne(tasks)
+        res.send(result)
+      })
+      
+      app.get('/tasks/:email',async(req,res)=>{
+        const email = req.params.email;
+        const query = {email: email}
+        const result = await tasksCollection.find(query).toArray()
+        res.send(result)
+      })
+
+      app.patch('/task/:id', async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const updatedDoc = {
+          $set: {
+            status: 'ongoing'
+          }
+        }
+        const result = await tasksCollection.updateOne(filter, updatedDoc)
         res.send(result)
       })
   
