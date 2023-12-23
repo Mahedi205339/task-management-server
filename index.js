@@ -23,17 +23,20 @@ async function run() {
 
     const tasksCollection = client.db('Task-management').collection('tasks')
 
+    //add new task
     app.post('/tasks', async (req, res) => {
       const tasks = req.body;
       const result = await tasksCollection.insertOne(tasks)
       res.send(result)
+
+      //get tasks
     })
     app.get('/tasks', async (req, res) => {
       const result = await tasksCollection.find().toArray()
       res.send(result)
     })
 
-
+//get task by email
     app.get('/tasks/:email', async (req, res) => {
       const email = req.params.email;
       const query = { email: email }
@@ -137,3 +140,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Task-Manager is running on port ${port}`)
 })
+
